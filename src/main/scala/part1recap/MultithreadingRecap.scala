@@ -1,6 +1,6 @@
 package part1recap
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 object MultithreadingRecap extends App {
@@ -75,5 +75,17 @@ object MultithreadingRecap extends App {
   // andThen, recover/recoverWith
 
   // Promises
+  def first[T](f: Future[T], g: Future[T]): Future[T] = {
+    val p = Promise[T]
 
+    f foreach { x =>
+      p.trySuccess(x)
+    }
+
+    g foreach { x =>
+      p.trySuccess(x)
+    }
+
+    p.future
+  }
 }
