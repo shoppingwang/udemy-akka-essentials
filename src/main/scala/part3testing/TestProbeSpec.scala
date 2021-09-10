@@ -2,11 +2,12 @@ package part3testing
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
-import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.wordspec.AnyWordSpecLike
 
 class TestProbeSpec extends TestKit(ActorSystem("TestProbeSpec"))
   with ImplicitSender
-  with WordSpecLike
+  with AnyWordSpecLike
   with BeforeAndAfterAll {
 
   override def afterAll(): Unit = {

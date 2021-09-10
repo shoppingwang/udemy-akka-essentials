@@ -17,7 +17,7 @@ object AdvancedRecap extends App {
     case 5 => 999
   }
 
-  val function: (Int => Int) = partialFunction
+  val function: Int => Int = partialFunction
 
   val modifiedList = List(1,2,3).map {
     case 1 => 42
@@ -49,7 +49,7 @@ object AdvancedRecap extends App {
   // implicits
 
   implicit val timeout = 3000
-  def setTimeout(f: () => Unit)(implicit timeout: Int) = f()
+  def setTimeout(f: () => Unit)(implicit timeout: Int): Unit = f()
 
   setTimeout(() => println("timeout"))// extra parameter list omitted
 
