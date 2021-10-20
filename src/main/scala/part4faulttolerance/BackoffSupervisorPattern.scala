@@ -1,10 +1,9 @@
 package part4faulttolerance
 
 import java.io.File
-
 import akka.actor.SupervisorStrategy.Stop
 import akka.actor.{Actor, ActorLogging, ActorSystem, OneForOneStrategy, Props}
-import akka.pattern.{Backoff, BackoffSupervisor}
+import akka.pattern.{BackoffOpts, BackoffSupervisor}
 
 import scala.concurrent.duration._
 import scala.io.Source
@@ -13,7 +12,7 @@ object BackoffSupervisorPattern extends App {
 
   case object ReadFile
   class FileBasedPersistentActor extends Actor with ActorLogging {
-    var dataSource: Source = null
+    var dataSource: Source = _
 
     override def preStart(): Unit =
       log.info("Persistent actor starting")
@@ -37,11 +36,11 @@ object BackoffSupervisorPattern extends App {
 //  simpleActor ! ReadFile
 
   val simpleSupervisorProps = BackoffSupervisor.props(
-    Backoff.onFailure(
+    BackoffOpts.onFailure(
       Props[FileBasedPersistentActor],
       "simpleBackoffActor",
-      3 seconds, // then 6s, 12s, 24s
-      30 seconds,
+      3.seconds, // then 6s, 12s, 24s
+      30.seconds,
       0.2
     )
   )
@@ -58,11 +57,11 @@ object BackoffSupervisorPattern extends App {
    */
 
   val stopSupervisorProps = BackoffSupervisor.props(
-    Backoff.onStop(
+    BackoffOpts.onStop(
       Props[FileBasedPersistentActor],
       "stopBackoffActor",
-      3 seconds,
-      30 seconds,
+      3.seconds,
+      30.seconds,
       0.2
     ).withSupervisorStrategy(
       OneForOneStrategy() {
@@ -84,11 +83,11 @@ object BackoffSupervisorPattern extends App {
   // ActorInitializationException => STOP
 
   val repeatedSupervisorProps = BackoffSupervisor.props(
-    Backoff.onStop(
+    BackoffOpts.onStop(
       Props[EagerFBPActor],
       "eagerActor",
-      1 second,
-      30 seconds,
+      1.second,
+      30.seconds,
       0.1
     )
   )
