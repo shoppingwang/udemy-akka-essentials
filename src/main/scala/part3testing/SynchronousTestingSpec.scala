@@ -1,7 +1,7 @@
 package part3testing
 
 import akka.actor.{Actor, ActorSystem, Props}
-import akka.testkit.{TestActorRef, TestProbe}
+import akka.testkit.{CallingThreadDispatcher, TestActorRef, TestProbe}
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.BeforeAndAfterAll
 
@@ -32,7 +32,7 @@ class SynchronousTestingSpec extends AnyWordSpecLike with BeforeAndAfterAll {
     }
 
     "work on the calling thread dispatcher" in {
-      val counter = system.actorOf(Props[Counter])
+      val counter = system.actorOf(Props[Counter].withDispatcher(CallingThreadDispatcher.Id))
       val probe = TestProbe()
 
       probe.send(counter, Read)
