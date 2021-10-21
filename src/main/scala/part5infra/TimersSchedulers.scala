@@ -43,7 +43,7 @@ object TimersSchedulers extends App {
     var schedule = createTimeoutWindow()
 
     def createTimeoutWindow(): Cancellable = {
-      context.system.scheduler.scheduleOnce(1 second) {
+      context.system.scheduler.scheduleOnce(1.second) {
         self ! "timeout"
       }
     }
@@ -78,12 +78,12 @@ object TimersSchedulers extends App {
   case object Reminder
   case object Stop
   class TimerBasedHeartbeatActor extends Actor with ActorLogging with Timers {
-    timers.startSingleTimer(TimerKey, Start, 500 millis)
+    timers.startSingleTimer(TimerKey, Start, 500.millis)
 
     override def receive: Receive = {
       case Start =>
         log.info("Bootstrapping")
-        timers.startPeriodicTimer(TimerKey, Reminder, 1 second)
+        timers.startTimerWithFixedDelay(TimerKey, Reminder, 1.second)
       case Reminder =>
         log.info("I am alive")
       case Stop =>
@@ -94,7 +94,7 @@ object TimersSchedulers extends App {
   }
 
   val timerHeartbeatActor = system.actorOf(Props[TimerBasedHeartbeatActor], "timerActor")
-  system.scheduler.scheduleOnce(5 seconds) {
+  system.scheduler.scheduleOnce(5.seconds) {
     timerHeartbeatActor ! Stop
   }
 
