@@ -31,7 +31,7 @@ class AskSpec extends TestKit(ActorSystem("AskSpec"))
     authenticatorTestSuite(Props[PipedAuthManager])
   }
 
-  def authenticatorTestSuite(props: Props) = {
+  def authenticatorTestSuite(props: Props): Unit = {
     import AuthManager._
 
     "fail to authenticate a non-registered user" in {
@@ -61,7 +61,9 @@ object AskSpec {
 
   // this code is somewhere else in your app
   case class Read(key: String)
+
   case class Write(key: String, value: String)
+
   class KVActor extends Actor with ActorLogging {
     override def receive: Receive = online(Map())
 
@@ -77,19 +79,25 @@ object AskSpec {
 
   // user authenticator actor
   case class RegisterUser(username: String, password: String)
+
   case class Authenticate(username: String, password: String)
+
   case class AuthFailure(message: String)
+
   case object AuthSuccess
+
   object AuthManager {
     val AUTH_FAILURE_NOT_FOUND = "username not found"
     val AUTH_FAILURE_PASSWORD_INCORRECT = "password incorrect"
     val AUTH_FAILURE_SYSTEM = "system error"
   }
+
   class AuthManager extends Actor with ActorLogging {
+
     import AuthManager._
 
     // step 2 - logistics
-    implicit val timeout: Timeout = Timeout(1 second)
+    implicit val timeout: Timeout = Timeout(1.second)
     implicit val executionContext: ExecutionContext = context.dispatcher
 
     protected val authDb = context.actorOf(Props[KVActor])
@@ -99,7 +107,7 @@ object AskSpec {
       case Authenticate(username, password) => handleAuthentication(username, password)
     }
 
-    def handleAuthentication(username: String, password: String) = {
+    def handleAuthentication(username: String, password: String): Unit = {
       val originalSender = sender()
       // step 3 - ask the actor
       val future = authDb ? Read(username)
@@ -118,6 +126,7 @@ object AskSpec {
   }
 
   class PipedAuthManager extends AuthManager {
+
     import AuthManager._
 
     override def handleAuthentication(username: String, password: String): Unit = {
